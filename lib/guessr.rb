@@ -6,6 +6,9 @@ Camping.goes :Guessr
 
 module Guessr
   module Models
+    class NumberGuessingGame < Base
+    end
+    
     class Player < Base
       validates :name, presence: true, uniqueness: true
       # alternately: validates :name, presence: true
@@ -29,6 +32,27 @@ module Guessr
 
       def set_finished!
         self.finished = true
+      end
+    end
+
+    class BasicSchema < V 2.0
+      def self.up
+        create_table Player.table_name do |t|
+          t.string :name
+          t.timestamps
+        end
+
+        create_table NumberGuessingGame.table_name do |t|
+          t.integer :guesses
+          t.integer :answer
+          t.boolean :finished
+          t.timestamps
+        end
+      end
+
+      def self.down
+        drop_table Player.table_name
+        drop_table NumberGuessingGame.table_name
       end
     end
 
@@ -61,6 +85,16 @@ module Guessr
 
       def self.down
         remove_column Hangman.table_name, :player_id
+      end
+    end
+
+    class AddPlayerIdToNumberGuessingGame < V 2.1
+      def self.up
+        add_column NumberGuessingGame.table_name :player_id, :integer
+      end
+
+      def self.down
+        remove_column NumberGuessingGame.table_name. :player_id
       end
     end
   end
